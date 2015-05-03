@@ -9,8 +9,8 @@ if [ ! -e pypy ]; then
     https://bitbucket.org/pypy/pypy/get/default.tar.gz 
 
   mkdir pypy
-
   tar -xvf pypy-download.tar.gz -C pypy --strip-components 1
+  rm -f pypy-download.tar.gz
 fi
 
 popd
