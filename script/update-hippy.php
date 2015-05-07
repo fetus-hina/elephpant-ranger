@@ -84,6 +84,7 @@ if (file_exists($outputDir . '/hippy-c'))
     if (!copy(LOCAL_PATH . '/hippy-c', $outputDir . '/hippy-c')) {
         exit(1);
     }
+    chmod($outputDir . '/hippy-c', 0755);
 }
 
 $json_compilers = [];

@@ -82,6 +82,7 @@ if (file_exists($outputDir . '/pyhp-c'))
     if (!copy(LOCAL_PATH . '/pyhp-c', $outputDir . '/pyhp-c')) {
         exit(1);
     }
+    chmod($outputDir . '/pyhp-c', 0755);
 }
 
 $json_compilers = [];
