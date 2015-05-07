@@ -30,6 +30,6 @@ $jsonCompilers[] = [
 
 $json = json_encode([
     'switches' => new \stdClass(),
-    'compilers' => $jsonCompilers,
+    'compilers' => sortCompilers($jsonCompilers),
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 file_put_contents(OUTPUT_COMPILERS_LIST, $json . "\n");

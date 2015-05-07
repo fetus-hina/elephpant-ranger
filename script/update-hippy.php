@@ -107,6 +107,6 @@ $json_compilers[] = [
 
 $json = json_encode([
     'switches' => new \stdClass(),
-    'compilers' => $json_compilers,
+    'compilers' => sortCompilers($json_compilers),
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 file_put_contents(OUTPUT_COMPILERS_LIST, $json . "\n");

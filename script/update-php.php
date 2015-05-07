@@ -1,5 +1,7 @@
 #!/usr/bin/env hhvm
 <?hh // strict
+require_once(__DIR__ . '/lib/includes.php');
+
 define('OUTPUT_BASE_DIR', '/opt/php');
 define('OUTPUT_COMPILERS_LIST', __DIR__ . '/../cattleshed.conf.d/compilers.php.conf');
 
@@ -133,7 +135,7 @@ foreach (getPhpVersionList() as $version) {
 
 $json = json_encode([
     'switches' => new \stdClass(),
-    'compilers' => $json_compilers,
+    'compilers' => sortCompilers($json_compilers),
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 file_put_contents(OUTPUT_COMPILERS_LIST, $json . "\n");
 
