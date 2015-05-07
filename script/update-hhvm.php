@@ -270,17 +270,19 @@ foreach ($targets as $targetInfo) {
             "/bin/echo",
             $match[1],
         ];
+        $language = 'HHVM';
     } else {
         $verCommand = [
             "/bin/sh",
             "-c",
             "{$outputDir}/bin/hhvm --version | cut -d' ' -f3",
         ];
+        $language = 'HHVM HEADs';
     }
 
     $jsonCompilers[] = [
         'name' => $targetInfo[1],
-        'language' => 'HHVM',
+        'language' => $language,
         'compile-command' => [
             '/usr/bin/touch',
             '.hhconfig',
