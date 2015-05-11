@@ -97,7 +97,7 @@ $json_compilers[] = [
         "{$outputDir}/pyhp-c",
         'prog.php',
     ],
-    'display-compile-command' => 'php prog.php',
+    'display-compile-command' => 'pyhp-c prog.php',
     'display-name' => 'PyHP',
     'runtime-option-raw' => false,
     'switches' => [],
