@@ -99,7 +99,7 @@ $json_compilers[] = [
         "{$outputDir}/hippy-c",
         'prog.php',
     ],
-    'display-compile-command' => 'php prog.php',
+    'display-compile-command' => 'hippy-c prog.php',
     'display-name' => 'HippyVM',
     'runtime-option-raw' => false,
     'switches' => [],
