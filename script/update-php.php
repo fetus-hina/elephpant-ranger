@@ -82,7 +82,6 @@ foreach (getPhpVersionList() as $version) {
     } else {
         continue;
     }
-    $force = false;
 
     if (!$force && file_exists($outdir . '/bin/php')) {
         echo "Already exists: $version\n";
