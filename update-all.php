@@ -24,3 +24,5 @@ exec_(sprintf(
     escapeshellarg(__DIR__ . '/cattleshed.conf.d/'),
     escapeshellarg('/opt/wandbox/etc/cattleshed.conf.d/')
 ));
+
+exec_('sudo /usr/local/bin/restart-cattleshed');
