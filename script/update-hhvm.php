@@ -2,7 +2,7 @@
 <?hh // strict
 require_once(__DIR__ . '/lib/includes.php');
 
-define('OUTPUT_BASE_DIR', '/opt/hhvm');
+define('OUTPUT_BASE_DIR', '/opt/wandbin/hhvm');
 define('OUTPUT_COMPILERS_LIST', __DIR__ . '/../cattleshed.conf.d/compilers.hhvm.conf');
 define('LOCAL_PATH', __DIR__ . '/../tmp/hhvm');
 
@@ -25,7 +25,7 @@ function updateRepository(string $revision = 'master') : bool
     $pushd = pushd(LOCAL_PATH);
     if (!exec_('/usr/bin/git reset --hard') ||
         !exec_('/usr/bin/git clean -xdqf') ||
-        !exec_(sprintf('/bin/rm -rfv %s', escapeshellarg(LOCAL_PATH . '/third-party'))) ||
+        !exec_(sprintf('/bin/rm -rf %s', escapeshellarg(LOCAL_PATH . '/third-party'))) ||
         !exec_(sprintf('/usr/bin/git checkout %s -f', escapeshellarg('origin/' . $revision))) ||
         !exec_('/usr/bin/git reset --hard') ||
         !exec_('/usr/bin/git submodule update --init --recursive'))

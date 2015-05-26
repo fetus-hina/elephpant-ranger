@@ -19,7 +19,7 @@ $jsonCompilers[] = [
     'run-command' => [
         "/usr/bin/java",
         "-jar",
-        "/opt/quercus/quercus-4.0.39/WEB-INF/lib/quercus.jar",
+        "/opt/wandbin/quercus/quercus-4.0.39/WEB-INF/lib/quercus.jar",
         "prog.php",
     ],
     "display-compile-command" => "java -jar quercus.jar prog.php",

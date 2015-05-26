@@ -2,7 +2,7 @@
 <?hh // strict
 require_once(__DIR__ . '/lib/includes.php');
 
-define('OUTPUT_BASE_DIR', '/opt/php');
+define('OUTPUT_BASE_DIR', '/opt/wandbin/php');
 define('OUTPUT_COMPILERS_LIST', __DIR__ . '/../cattleshed.conf.d/compilers.php.conf');
 
 $skipSnapShots = in_array('--skip', $argv);
@@ -31,7 +31,7 @@ function getPhpVersionList() : array<string>
 {
     $cmdline = sprintf(
         '/usr/bin/env %s --definitions | %s',
-        escapeshellarg('php-build'),
+        escapeshellarg('/opt/ranger/php-build/bin/php-build'),
         escapeshellarg(__DIR__ . '/versionsort.php')
     );
     exec($cmdline, $lines, $status);
@@ -94,7 +94,7 @@ foreach (getPhpVersionList() as $version) {
             }
         }
         $cmdline = sprintf(
-            '/usr/bin/env CFLAGS=%1$s CXXFLAGS=%1$s %4$s php-build %2$s %3$s',
+            '/usr/bin/env CFLAGS=%1$s CXXFLAGS=%1$s %4$s /opt/ranger/php-build/bin/php-build %2$s %3$s',
             escapeshellarg('-O3 -march=native -mtune=native'),
             escapeshellarg($version),
             escapeshellarg($outdir),
@@ -140,7 +140,7 @@ file_put_contents(OUTPUT_COMPILERS_LIST, $json . "\n");
 
 function addSourcePatchSetting($version, $patch)
 {
-    $confPath = '/usr/local/share/php-build/definitions/' . $version;
+    $confPath = '/opt/ranger/php-build/share/php-build/definitions/' . $version;
     $confLine = "patch_file \"{$patch}\"";
     $conf = file_get_contents($confPath);
     if (preg_match('/^' . preg_quote($confLine, '$/') . '/m', $conf)) {

@@ -22,7 +22,7 @@ foreach ($scripts as $script) {
 exec_(sprintf(
     '/usr/bin/rsync -rv %s %s',
     escapeshellarg(__DIR__ . '/cattleshed.conf.d/'),
-    escapeshellarg('/opt/wandbox/etc/cattleshed.conf.d/')
+    escapeshellarg('/opt/wandbox/cattleshed/etc/cattleshed.conf.d/')
 ));
 
 exec_('sudo /usr/local/bin/restart-cattleshed');

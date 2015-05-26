@@ -2,7 +2,7 @@
 <?hh // strict
 require_once(__DIR__ . '/lib/includes.php');
 
-define('OUTPUT_BASE_DIR', '/opt/hippy');
+define('OUTPUT_BASE_DIR', '/opt/wandbin/hippy');
 define('OUTPUT_COMPILERS_LIST', __DIR__ . '/../cattleshed.conf.d/compilers.hippy.conf');
 define('RPYTHON_PATH', __DIR__ . '/../opt/pypy/rpython/bin/rpython');
 define('LOCAL_PATH', __DIR__ . '/../tmp/hippyvm');
