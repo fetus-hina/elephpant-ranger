@@ -8,8 +8,7 @@ define('LOCAL_PATH', __DIR__ . '/../tmp/hhvm');
 
 $skipSnapShots = in_array('--skip', $argv);
 
-// git master に追従し、任意のブランチ/タグをチェックアウトする
-function updateRepository(string $revision = 'master') : bool
+function fetchRemoteRepository() : bool
 {
     if (!file_exists(LOCAL_PATH)) {
         if (!exec_(sprintf(
@@ -23,10 +22,21 @@ function updateRepository(string $revision = 'master') : bool
     }
 
     $pushd = pushd(LOCAL_PATH);
+    if (!exec('/usr/bin/git fetch --all --tags')) {
+        return false;
+    }
+    return true;
+}
+
+// git master に追従し、任意のブランチ/タグをチェックアウトする
+function updateRepository(string $revision = 'origin/master') : bool
+{
+    $pushd = pushd(LOCAL_PATH);
     if (!exec_('/usr/bin/git reset --hard') ||
         !exec_('/usr/bin/git clean -xdqf') ||
+        !exec_('/usr/bin/git fetch --all --tags') ||
         !exec_(sprintf('/bin/rm -rf %s', escapeshellarg(LOCAL_PATH . '/third-party'))) ||
-        !exec_(sprintf('/usr/bin/git checkout %s -f', escapeshellarg('origin/' . $revision))) ||
+        !exec_(sprintf('/usr/bin/git checkout %s -f', escapeshellarg($revision))) ||
         !exec_('/usr/bin/git reset --hard') ||
         !exec_('/usr/bin/git submodule update --init --recursive'))
     {
@@ -196,7 +206,7 @@ function getBuildTargets() : ?array<string>
         array_map(
             function (string $tag) : Pair<string, string> {
                 return Pair {
-                    $tag,
+                    "origin/$tag",
                     $tag === 'master' ? 'hhvm-head' : strtolower($tag) . '-head'
                 };
             },
@@ -231,6 +241,10 @@ function buildAndInstall(string $prefix) : bool
     }
     
     return true;
+}
+
+if (!fetchRemoteRepository()) {
+    exit(1);
 }
 
 if (!$targets = getBuildTargets()) {
