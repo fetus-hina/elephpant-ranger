@@ -10,6 +10,7 @@ $scripts = [
     __DIR__ . '/script/update-quercus.php',
     __DIR__ . '/script/update-hippy.php',
     __DIR__ . '/script/update-pyhp.php',
+    __DIR__ . '/script/update-phpphp.php',
 ];
 foreach ($scripts as $script) {
     exec_(sprintf(
