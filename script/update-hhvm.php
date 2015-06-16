@@ -37,7 +37,7 @@ function updateRepository(string $revision = 'origin/master') : bool
         !exec_('/usr/bin/git fetch --all --tags') ||
         !exec_(sprintf('/bin/rm -rf %s', escapeshellarg(LOCAL_PATH . '/third-party'))) ||
         !exec_(sprintf('/usr/bin/git checkout %s -f', escapeshellarg($revision))) ||
-        !exec_('/usr/bin/git reset --hard') ||
+        !exec_(sprintf('/usr/bin/git reset --hard %s', escapeshellarg($revision))) ||
         !exec_('/usr/bin/git submodule update --init --recursive'))
     {
         return false;
