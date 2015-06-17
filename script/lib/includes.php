@@ -1,12 +1,14 @@
-<?hh // struct
+<?php
+date_default_timezone_set('Asia/Tokyo');
+
 require_once(__DIR__ . '/PushD.php');
 
-function pushd(string $newDir) : PushD
+function pushd($newDir)
 {
     return new PushD($newDir);
 }
 
-function exec_(string $cmdline) : bool
+function exec_($cmdline)
 {
     echo "EXECUTE: {$cmdline}\n";
     $status = null;
@@ -15,11 +17,11 @@ function exec_(string $cmdline) : bool
     return $status === 0;
 }
 
-function sortCompilers(array $compilers) : array
+function sortCompilers(array $compilers)
 {
     usort(
         $compilers,
-        function ($lhs, $rhs) : int {
+        function ($lhs, $rhs) {
             if (($tmp = strnatcasecmp($lhs['display-name'], $rhs['display-name'])) !== 0) {
                 return $tmp;
             }

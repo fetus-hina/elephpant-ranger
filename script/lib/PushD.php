@@ -1,14 +1,14 @@
-<?hh // strict
+<?php
 class PushD
 {
-    private string $oldDir;
+    private $oldDir;
 
-    public function __construct(string $newDir)
+    public function __construct($newDir)
     {
         $this->oldDir = getcwd();
         echo "(pushd) chdir to $newDir\n";
         if (!chdir($newDir)) {
-            throw new Exception('Could not chdir');
+            throw new \Exception('Could not chdir');
         }
     }
 
@@ -17,7 +17,7 @@ class PushD
         $oldDir = $this->oldDir;
         echo "(popd) chdir to $oldDir\n";
         if (!chdir($oldDir)) {
-            throw new Exception('Could not chdir to restore');
+            throw new \Exception('Could not chdir to restore');
         }
     }
 }

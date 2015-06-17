@@ -1,5 +1,5 @@
-#!/usr/bin/env hhvm
-<?hh // strict
+#!/usr/bin/env php
+<?php
 require_once(__DIR__ . '/lib/includes.php');
 
 define('OUTPUT_BASE_DIR', '/opt/wandbin/hhvm');
@@ -8,7 +8,7 @@ define('LOCAL_PATH', __DIR__ . '/../tmp/hhvm');
 
 $skipSnapShots = in_array('--skip', $argv);
 
-function fetchRemoteRepository() : bool
+function fetchRemoteRepository()
 {
     if (!file_exists(LOCAL_PATH)) {
         if (!exec_(sprintf(
@@ -29,7 +29,7 @@ function fetchRemoteRepository() : bool
 }
 
 // git master に追従し、任意のブランチ/タグをチェックアウトする
-function updateRepository(string $revision = 'origin/master') : bool
+function updateRepository($revision = 'origin/master')
 {
     $pushd = pushd(LOCAL_PATH);
     if (!exec_('/usr/bin/git reset --hard') ||
@@ -45,7 +45,7 @@ function updateRepository(string $revision = 'origin/master') : bool
     return true;
 }
 
-function getReleaseTags() : ?array<string>
+function getReleaseTags()
 {
     exec(
         sprintf(
@@ -61,21 +61,21 @@ function getReleaseTags() : ?array<string>
     return array_values(
         array_filter(
             array_map(
-                function (string $v) : ?string {
+                function ($v) {
                     return preg_match('!\brefs/tags/(HHVM-\d+\.\d+\.\d+)$!', $v, $match)
                         ? $match[1]
                         : null;
                 },
                 $lines
             ),
-            function (?string $v) : bool {
+            function ($v) {
                 return !is_null($v);
             }
         )
     );
 }
 
-function getBuildTargetTags() : ?array<string>
+function getBuildTargetTags()
 {
     if (!$tags = getReleaseTags()) {
         return null;
@@ -92,23 +92,23 @@ function getBuildTargetTags() : ?array<string>
         }
         if (!isset($latest[$match[2]])) {
             // 同一リリースが見つからなかったので採用
-            $latest[$match[2]] = Pair { $match[1], $match[0] };
+            $latest[$match[2]] = [ $match[1], $match[0] ];
         } elseif (version_compare($latest[$match[2]][0], $match[1], '<')) {
             // 同一リリース内でより新しいのを見つけたので更新
-            $latest[$match[2]] = Pair { $match[1], $match[0] };
+            $latest[$match[2]] = [ $match[1], $match[0] ];
         }
     }
     
     // Pair の second に入っている実際のタグ名を返す
     return array_map(
-        function (Pair<string, string> $pair) : string {
+        function ($pair) {
             return $pair[1];
         },
         array_values($latest)
     );
 }
 
-function getMainBranches() : ?array<string>
+function getMainBranches()
 {
     exec(
         sprintf(
@@ -124,14 +124,14 @@ function getMainBranches() : ?array<string>
     return array_values(
         array_filter(
             array_map(
-                function (string $v) : ?string {
+                function ($v) {
                     return preg_match('!\brefs/heads/(HHVM-\d+\.\d+|master)$!', $v, $match)
                         ? $match[1]
                         : null;
                 },
                 $lines
             ),
-            function (?string $v) : bool {
+            function ($v) {
                 return !is_null($v);
             }
         )
@@ -140,7 +140,7 @@ function getMainBranches() : ?array<string>
 
 // なんとなくのサポート期限を考慮してなんとなくサポートされていそうな
 // 開発ブランチの一覧を取得する
-function getActiveBranches() : ?array<string>
+function getActiveBranches()
 {
     if (!$branches = getMainBranches()) {
         return null;
@@ -165,7 +165,7 @@ function getActiveBranches() : ?array<string>
     return array_values(
         array_filter(
             $branches,
-            function (string $name) : bool use ($releases) {
+            function ($name) use ($releases) {
                 if ($name === 'master') {
                     return true;
                 }
@@ -188,7 +188,7 @@ function getActiveBranches() : ?array<string>
     );
 }
 
-function getBuildTargets() : ?array<string>
+function getBuildTargets()
 {
     if (!$tags = getBuildTargetTags()) {
         return null;
@@ -198,24 +198,24 @@ function getBuildTargets() : ?array<string>
     }
     return array_merge(
         array_map(
-            function (string $tag) : Pair<string, string> {
-                return Pair { $tag, strtolower($tag) };
+            function ($tag) {
+                return [ $tag, strtolower($tag) ];
             },
             $tags
         ),
         array_map(
-            function (string $tag) : Pair<string, string> {
-                return Pair {
+            function ($tag) {
+                return [
                     "origin/$tag",
                     $tag === 'master' ? 'hhvm-head' : strtolower($tag) . '-head'
-                };
+                ];
             },
             $branches
         )
     );
 }
 
-function buildAndInstall(string $prefix) : bool
+function buildAndInstall($prefix)
 {
     $pushd = pushd(LOCAL_PATH);
     if (!exec_(sprintf(
