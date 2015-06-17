@@ -8,40 +8,30 @@ define('LOCAL_PATH', __DIR__ . '/../tmp/hhvm');
 
 $skipSnapShots = in_array('--skip', $argv);
 
-function fetchRemoteRepository()
+function updateRepository($revision)
 {
-    if (!file_exists(LOCAL_PATH)) {
-        if (!exec_(sprintf(
-                '/usr/bin/git clone %s -b master %s',
-                escapeshellarg('https://github.com/facebook/hhvm.git'),
-                escapeshellarg(LOCAL_PATH)
-        )))
-        {
+    if (file_exists(LOCAL_PATH)) {
+        if (!exec_(sprintf('rm -rf %s', LOCAL_PATH))) {
             return false;
         }
     }
 
-    $pushd = pushd(LOCAL_PATH);
-    if (!exec('/usr/bin/git fetch --all --tags')) {
+    if (!exec_(sprintf(
+            '/usr/bin/git clone %s %s',
+            escapeshellarg('https://github.com/facebook/hhvm.git'),
+            escapeshellarg(LOCAL_PATH)
+    )))
+    {
         return false;
     }
-    return true;
-}
 
-// git master に追従し、任意のブランチ/タグをチェックアウトする
-function updateRepository($revision = 'origin/master')
-{
     $pushd = pushd(LOCAL_PATH);
-    if (!exec_('/usr/bin/git reset --hard') ||
-        !exec_('/usr/bin/git clean -xdqf') ||
-        !exec_('/usr/bin/git fetch --all --tags') ||
-        !exec_(sprintf('/bin/rm -rf %s', escapeshellarg(LOCAL_PATH . '/third-party'))) ||
-        !exec_(sprintf('/usr/bin/git checkout %s -f', escapeshellarg($revision))) ||
-        !exec_(sprintf('/usr/bin/git reset --hard %s', escapeshellarg($revision))) ||
+    if (!exec_(sprintf('/usr/bin/git checkout %s', escapeshellarg($revision))) ||
         !exec_('/usr/bin/git submodule update --init --recursive'))
     {
         return false;
     }
+
     return true;
 }
 
@@ -92,10 +82,16 @@ function getBuildTargetTags()
         }
         if (!isset($latest[$match[2]])) {
             // 同一リリースが見つからなかったので採用
-            $latest[$match[2]] = [ $match[1], $match[0] ];
+            $latest[$match[2]] = [
+                $match[1],
+                $match[0]
+            ];
         } elseif (version_compare($latest[$match[2]][0], $match[1], '<')) {
             // 同一リリース内でより新しいのを見つけたので更新
-            $latest[$match[2]] = [ $match[1], $match[0] ];
+            $latest[$match[2]] = [
+                $match[1],
+                $match[0]
+            ];
         }
     }
     
@@ -199,7 +195,10 @@ function getBuildTargets()
     return array_merge(
         array_map(
             function ($tag) {
-                return [ $tag, strtolower($tag) ];
+                return [
+                    'refs/tags/' . $tag,
+                    strtolower($tag)
+                ];
             },
             $tags
         ),
@@ -241,10 +240,6 @@ function buildAndInstall($prefix)
     }
     
     return true;
-}
-
-if (!fetchRemoteRepository()) {
-    exit(1);
 }
 
 if (!$targets = getBuildTargets()) {
