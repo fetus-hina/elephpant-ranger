@@ -274,7 +274,7 @@ foreach ($targets as $targetInfo) {
 $jsonCompilers = [];
 foreach ($targets as $targetInfo) {
     $outputDir = OUTPUT_BASE_DIR . '/' . $targetInfo[1];
-    if (strpos($targetInfo[1], '-head') === false && preg_match('!^HHVM-([\d.]+)$!', $targetInfo[0], $match)) {
+    if (strpos($targetInfo[1], '-head') === false && preg_match('!\bHHVM-([\d.]+)$!', $targetInfo[0], $match)) {
         $verCommand = [
             "/bin/echo",
             $match[1],
