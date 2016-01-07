@@ -302,6 +302,7 @@ foreach ($targets as $targetInfo) {
         'run-command' => [
             "{$outputDir}/bin/hhvm",
             "-d date.timezone=Etc/UTC",
+            "-v Hack.Lang.LookForTypechecker=0",
             'prog.php',
         ],
         'display-compile-command' => 'hhvm prog.php',
