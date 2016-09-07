@@ -52,20 +52,41 @@ function isIgnoreVersion(string $version) : bool
 {
     $list = [
         '5.4snapshot',
+        '5.5snapshot',
+        '5.6.0RC1',
+        '5.6.0RC2',
+        '5.6.0RC3',
+        '5.6.0RC4',
+        '7.0.0alpha1',
+        '7.0.0alpha2',
+        '7.0.0beta1',
+        '7.0.0beta2',
+        '7.0.0beta3',
+        '7.0.0RC1',
+        '7.0.0RC2',
+        '7.0.0RC3',
+        '7.0.0RC4',
+        '7.0.0RC5',
+        '7.0.0RC6',
+        '7.0.0RC7',
+        '7.0.0RC8',
+        '7.1.0beta2',
+        '7.1.0beta3',
     ];
     return !!in_array($version, $list);
 }
 
 $json_switches = [];
 $json_compilers = [];
+$fails = [];
 foreach (getPhpVersionList() as $version) {
     if (isIgnoreVersion($version)) {
         echo "Skip: {$version}\n";
         continue;
     }
     $force = false;
-    if (preg_match('/^[\d.]+$/', $version)) { // release
-        $outdir = OUTPUT_BASE_DIR . '/php-' . $version;
+    if (preg_match('/^[\d.]+(?:(?:alpha|beta|RC)\d+)?$/', $version)) { // release
+        $outdir = OUTPUT_BASE_DIR . '/php-' . strtolower($version);
         $wandbox_category = 'PHP ' . preg_replace('/^(\d+\.\d+).+$/', "$1", $version);
     } elseif (strpos($version, 'snapshot') !== false) {
         $outdir = sprintf(
@@ -103,6 +124,11 @@ foreach (getPhpVersionList() as $version) {
                 : ''
         );
         passthru($cmdline, $status);
+        if ($status != 0) {
+            echo "**** PHP {$version} failed building ****\n";
+            $fails[] = $version;
+            continue;
+        }
     }
 
     $dispVersion = exec(
@@ -130,6 +156,13 @@ foreach (getPhpVersionList() as $version) {
         'runtime-option-raw' => false,
         'switches' => [],
     ];
+}
+
+if ($fails) {
+    echo "********************************\n";
+    echo "FAILED:\n";
+    echo implode("\n", $fails) . "\n";
+    echo "********************************\n";
 }
 
 $json = json_encode([
