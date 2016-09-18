@@ -11,6 +11,7 @@ $scripts = [
     __DIR__ . '/script/update-hippy.php',
     __DIR__ . '/script/update-pyhp.php',
     __DIR__ . '/script/update-phpphp.php',
+    __DIR__ . '/script/update-haxe.php',
 ];
 foreach ($scripts as $script) {
     exec_(sprintf(
