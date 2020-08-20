@@ -7,7 +7,7 @@ define('REVERSE', in_array('-r', $argv) ? -1 : 1);
 
 $list = [];
 while (!feof(STDIN)) {
-    $line = trim(fgets(STDIN));
+    $line = trim((string)fgets(STDIN));
     if ($line !== '') {
         $list[] = $line;
     }
