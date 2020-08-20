@@ -9,12 +9,12 @@ $skipSnapShots = in_array('--skip', $argv);
 
 $scripts = [
     __DIR__ . '/script/update-php.php',
-    __DIR__ . '/script/update-hhvm.php',
-    __DIR__ . '/script/update-quercus.php',
-    __DIR__ . '/script/update-hippy.php',
-    __DIR__ . '/script/update-pyhp.php',
-    __DIR__ . '/script/update-phpphp.php',
-    __DIR__ . '/script/update-haxe.php',
+    // __DIR__ . '/script/update-hhvm.php',
+    // __DIR__ . '/script/update-quercus.php',
+    // __DIR__ . '/script/update-hippy.php',
+    // __DIR__ . '/script/update-pyhp.php',
+    // __DIR__ . '/script/update-phpphp.php',
+    // __DIR__ . '/script/update-haxe.php',
 ];
 foreach ($scripts as $script) {
     exec_(sprintf(
