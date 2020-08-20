@@ -1,5 +1,8 @@
-#!/usr/bin/env hhvm
-<?hh // strict
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
 require_once(__DIR__ . '/lib/includes.php');
 
 define('OUTPUT_BASE_DIR', '/opt/wandbin/pyhp');
@@ -10,16 +13,17 @@ define('LOCAL_PATH', __DIR__ . '/../tmp/pyhp');
 $skipSnapShots = in_array('--skip', $argv);
 
 // git master HEAD に追従し commit-id を返す
-function updateRepository() : ?string
+function updateRepository(): ?string
 {
     if (file_exists(LOCAL_PATH)) {
         $pushd = pushd(LOCAL_PATH);
-        if (!exec_('/usr/bin/git reset --hard') ||
+        if (
+            !exec_('/usr/bin/git reset --hard') ||
             !exec_('/usr/bin/git clean -xdqf') ||
             !exec_('/usr/bin/git pull origin master -f') ||
             !exec_('/usr/bin/git reset --hard') ||
-            !exec_('/usr/bin/git submodule update --init --recursive'))
-        {
+            !exec_('/usr/bin/git submodule update --init --recursive')
+        ) {
             return null;
         }
         $commitId = exec('/usr/bin/git show -s --format=%H');
@@ -27,11 +31,10 @@ function updateRepository() : ?string
     }
 
     if (!exec_(sprintf(
-            '/usr/bin/git clone %s -b master %s --recursive',
-            escapeshellarg('https://github.com/juokaz/pyhp.git'),
-            escapeshellarg(LOCAL_PATH)
-        )))
-    {
+        '/usr/bin/git clone %s -b master %s --recursive',
+        escapeshellarg('https://github.com/juokaz/pyhp.git'),
+        escapeshellarg(LOCAL_PATH)
+    ))) {
         return null;
     }
     pushd(LOCAL_PATH);
@@ -39,13 +42,13 @@ function updateRepository() : ?string
     return strtolower(substr($commitId, 0, 7));
 }
 
-function updateDepends() : bool
+function updateDepends(): bool
 {
     $pushd = pushd(LOCAL_PATH);
     return exec_('pip install -r requirements.txt');
 }
 
-function build() : bool
+function build(): bool
 {
     $pushd = pushd(LOCAL_PATH);
     $ret = exec_(sprintf(

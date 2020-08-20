@@ -1,5 +1,8 @@
-#!/usr/bin/env hhvm
-<?hh // strict
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
 require_once(__DIR__ . '/lib/includes.php');
 
 define('OUTPUT_BASE_DIR', '/opt/wandbin/php');
@@ -8,7 +11,7 @@ define('OUTPUT_COMPILERS_LIST', __DIR__ . '/../cattleshed.conf.d/compilers.php.c
 $skipSnapShots = in_array('--skip', $argv);
 
 // 指定されたバージョンに必要な追加パッチのリストを返す
-function getPatches(string $version) : array<string>
+function getPatches(string $version): array
 {
     $patches = [];
     if (version_compare($version, '5.4.7', '<')) {
@@ -20,14 +23,14 @@ function getPatches(string $version) : array<string>
 // libstdc++ を明示的にリンクしなければならないバージョンか判定する
 // C++ ソースを利用しているのに libstdc++ をリンクしないバージョンが
 // 存在する
-function fixLinkCPlusPlus(string $version) : bool
+function fixLinkCPlusPlus(string $version): bool
 {
     return version_compare($version, '5.3.0', '>=') &&
         version_compare($version, '5.4.0', '<');
 }
 
 // php-build で作成可能な PHP バージョンの一覧を取得する
-function getPhpVersionList() : array<string>
+function getPhpVersionList(): array
 {
     $cmdline = sprintf(
         '/usr/bin/env %s --definitions | %s',
@@ -48,7 +51,7 @@ function getPhpVersionList() : array<string>
 }
 
 // 一部のバージョンはコンパイル対象から外す
-function isIgnoreVersion(string $version) : bool
+function isIgnoreVersion(string $version): bool
 {
     $list = [
         '5.4snapshot',

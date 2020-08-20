@@ -1,5 +1,8 @@
-#!/usr/bin/env hhvm
-<?hh // strict
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
 require_once(__DIR__ . '/lib/includes.php');
 
 define('OUTPUT_COMPILERS_LIST', __DIR__ . '/../cattleshed.conf.d/compilers.quercus.conf');

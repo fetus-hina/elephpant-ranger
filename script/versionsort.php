@@ -1,5 +1,8 @@
-#!/usr/bin/env hhvm
-<?hh // strict
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
 define('REVERSE', in_array('-r', $argv) ? -1 : 1);
 
 $list = [];
@@ -12,7 +15,7 @@ while (!feof(STDIN)) {
 
 usort(
     $list,
-    function (string $lhs, string $rhs) : int {
+    function (string $lhs, string $rhs): int {
         if ($lhs === 'master') {
             return REVERSE * 1;
         }
@@ -33,6 +36,6 @@ if (empty($list)) {
     exit(0);
 }
 
-array_walk($list, function (string $line) : void {
+array_walk($list, function (string $line): void {
     echo $line . "\n";
 });

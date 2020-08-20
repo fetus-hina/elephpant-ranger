@@ -1,5 +1,8 @@
-#!/usr/bin/env hhvm
-<?hh // strict
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
 require_once(__DIR__ . '/script/lib/includes.php');
 
 $skipSnapShots = in_array('--skip', $argv);
