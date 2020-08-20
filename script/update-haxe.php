@@ -15,7 +15,7 @@ foreach (getHaxeVersions('/opt/haxe') as $haxeVersion) {
         'compile-command' => [
             '/usr/bin/scl',
             'enable',
-            'php70',
+            'php74',
             '--',
             '/opt/wandbin/haxe/compile.php',
             sprintf('--haxe=%s', $haxeVersion),
@@ -28,7 +28,7 @@ foreach (getHaxeVersions('/opt/haxe') as $haxeVersion) {
         'run-command' => [
             '/usr/bin/scl',
             'enable',
-            'php70',
+            'php74',
             '--',
             '/opt/wandbin/haxe/runner.php',
             '--dir=compiled',
