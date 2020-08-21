@@ -29,6 +29,11 @@ function fixLinkCPlusPlus(string $version): bool
         version_compare($version, '5.4.0', '<');
 }
 
+function beDisableZip(string $version): bool
+{
+    return version_compare($version, '7.3.9999', '>');
+}
+
 // php-build で作成可能な PHP バージョンの一覧を取得する
 function getPhpVersionList(): array
 {
@@ -60,11 +65,7 @@ function isIgnoreVersion(string $version): bool
         '5.6.0RC2',
         '5.6.0RC3',
         '5.6.0RC4',
-        '7.0.0alpha1',
-        '7.0.0alpha2',
-        '7.0.0beta1',
-        '7.0.0beta2',
-        '7.0.0beta3',
+        '5.6snapshot',
         '7.0.0RC1',
         '7.0.0RC2',
         '7.0.0RC3',
@@ -73,10 +74,31 @@ function isIgnoreVersion(string $version): bool
         '7.0.0RC6',
         '7.0.0RC7',
         '7.0.0RC8',
+        '7.0.0alpha1',
+        '7.0.0alpha2',
+        '7.0.0beta1',
+        '7.0.0beta2',
+        '7.0.0beta3',
+        '7.0snapshot',
+        '7.1.0beta1',
         '7.1.0beta2',
         '7.1.0beta3',
+        '7.1snapshot',
+        '7.3.0RC1',
+        '7.3.0RC2',
+        '7.3.0RC3',
+        '7.3.0RC4',
+        '7.3.0RC5',
+        '7.3.0alpha1',
+        '7.3.0alpha2',
+        '7.3.0alpha3',
+        '7.3.0alpha4',
+        '7.3.0beta1',
+        '7.3.0beta2',
+        '7.3.0beta3',
+        '7.3.2RC1',
     ];
-    return !!in_array($version, $list);
+    return !!in_array($version, $list, true);
 }
 
 $json_switches = [];
@@ -117,15 +139,29 @@ foreach (getPhpVersionList() as $version) {
                 addSourcePatchSetting($version, $patch);
             }
         }
+
+        if (beDisableZip($version)) {
+            disableZip($version);
+        }
+
         $cmdline = sprintf(
-            '/usr/bin/env CFLAGS=%1$s CXXFLAGS=%1$s %4$s /opt/ranger/php-build/bin/php-build %2$s %3$s',
-            escapeshellarg('-O3 -march=native -mtune=native'),
+            '/usr/bin/env CFLAGS=%1$s CXXFLAGS=%1$s %4$s scl enable devtoolset-9 -- /opt/ranger/php-build/bin/php-build --verbose %2$s %3$s',
+            escapeshellarg(implode(' ', array_filter([
+                '-O3',
+                '-march=native',
+                '-mtune=native',
+            ]))),
             escapeshellarg($version),
             escapeshellarg($outdir),
-            fixLinkCPlusPlus($version)
-                ? 'EXTRA_LIBS=' . escapeshellarg('-lstdc++')
-                : ''
+            implode(' ', array_filter([
+                fixLinkCPlusPlus($version)
+                    ? 'EXTRA_LIBS=' . escapeshellarg('-lstdc++')
+                    : null,
+            ])),
         );
+        echo str_repeat('-', 72) . "\n";
+        echo $cmdline . "\n";
+        echo str_repeat('-', 72) . "\n";
         passthru($cmdline, $status);
         if ($status != 0) {
             echo "**** PHP {$version} failed building ****\n";
@@ -174,7 +210,7 @@ $json = json_encode([
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 file_put_contents(OUTPUT_COMPILERS_LIST, $json . "\n");
 
-function addSourcePatchSetting($version, $patch)
+function addSourcePatchSetting(string $version, string $patch): void
 {
     $confPath = '/opt/ranger/php-build/share/php-build/definitions/' . $version;
     $confLine = "patch_file \"{$patch}\"";
@@ -185,4 +221,30 @@ function addSourcePatchSetting($version, $patch)
     }
     $conf = preg_replace('/^(?=install_package)/m', $confLine . "\n", $conf);
     file_put_contents($confPath, $conf);
+}
+
+function disableZip(string $version): void
+{
+    $delLine = 'configure_option "--with-zip"';
+    $addLine = 'configure_option -D "--with-zip"';
+
+    $confPath = '/opt/ranger/php-build/share/php-build/definitions/' . $version;
+    $conf = file_get_contents($confPath);
+    $origConf = $conf;
+
+    if (preg_match('/^' . preg_quote($delLine, '/') . '$/m', $conf)) {
+        $conf = preg_replace(
+            '/^' . preg_quote($delLine, '/') . '$/m',
+            '',
+            $conf
+        );
+    }
+
+    if (!preg_match('/^' . preg_quote($addLine, '/') . '$/m', $conf)) {
+        $conf = preg_replace('/^(?=install_package)/m', $addLine . "\n", $conf);
+    }
+
+    if ($conf !== $origConf) {
+        file_put_contents($confPath, $conf);
+    }
 }
